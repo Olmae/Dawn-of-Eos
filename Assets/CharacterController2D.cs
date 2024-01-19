@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class CharacterController2D : MonoBehaviour
 {
+    // Состояния персонажа
     private enum State
     {
         Normal,
@@ -13,13 +14,16 @@ public class CharacterController2D : MonoBehaviour
         Cooldown
     }
 
+    // Компоненты и переменные для управления персонажем
     private Rigidbody2D rigidbody2D;
     private Vector3 moveDir;
     private Vector3 rollDir;
-    
     private float rollSpeed;
+
     [SerializeField] private LayerMask dashLayerMask;
     [SerializeField] public Image imageCooldown;
+
+    // Параметры атаки
     public float attackRadius = 3f;
     public float attackDelay = 0.5f;
     public LayerMask enemyLayerMask;
@@ -28,6 +32,7 @@ public class CharacterController2D : MonoBehaviour
     private float nextAttackTime = 0.1f;
     public float attackCooldown = 0.5f;
 
+    // Состояние и параметры кулдауна
     private State state;
     private bool isCooldown = false;
     public float MoveSpeed;
@@ -39,7 +44,6 @@ public class CharacterController2D : MonoBehaviour
 
     public Animator animator;
     public float attackAnimationLength;
-
     private float attackAnimationTime = 0f;
 
     void Start()
@@ -58,6 +62,7 @@ public class CharacterController2D : MonoBehaviour
         switch (state)
         {
             case State.Normal:
+                // Получение ввода для движения
                 float moveX = 0f;
                 float moveY = 0f;
                 
@@ -72,6 +77,7 @@ public class CharacterController2D : MonoBehaviour
 
                 moveDir = new Vector3(moveX, moveY).normalized;
 
+                // Проверка на использование ролла
                 if (Time.time > nextFire)
                 {
                     if (Input.GetKeyDown(KeyCode.Space))
@@ -86,21 +92,22 @@ public class CharacterController2D : MonoBehaviour
                     }
                 }
 
+                // Проверка на использование атаки
                 if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime)
                 {
                     UnityEngine.Debug.Log("Нажато ЛКМ");
 
-                    // Set the next attack time
+                    // Установка времени следующей атаки
                     nextAttackTime = Time.time + attackCooldown;
 
-                    // Set the attack animation parameter to true
+                    // Установка параметра атаки в аниматоре в true
                     UnityEngine.Debug.Log("Setting Attack parameter to true");
                     animator.SetBool("Attack", true);
                     attackAnimationTime = Time.time + attackAnimationLength;
                     isAttacking = true;
                 }
 
-                // Check for the end of the attack animation
+                // Проверка окончания анимации атаки
                 if (isAttacking && Time.time >= attackAnimationTime)
                 {
                     UnityEngine.Debug.Log("Setting Attack parameter to false");
@@ -108,7 +115,7 @@ public class CharacterController2D : MonoBehaviour
                     isAttacking = false;
                 }
 
-                // Damage enemies during the entire attack animation
+                // Нанесение урона врагам в течение всей анимации атаки
                 if (isAttacking)
                 {
                     Collider2D[] hitColliders = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayerMask);
@@ -117,12 +124,13 @@ public class CharacterController2D : MonoBehaviour
                         Enemy enemy = collider.GetComponent<Enemy>();
                         if (enemy != null)
                         {
-                            // Damage enemy
+                            // Нанесение урона врагу
                             enemy.TakeDamage(attackDamage);
                         }
                     }
                 }
 
+                // Определение направления взгляда персонажа
                 if (moveX > 0)
                 {
                     transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
@@ -139,6 +147,7 @@ public class CharacterController2D : MonoBehaviour
                 break;
 
             case State.Rolling:
+                // Замедление скорости ролла
                 float rollSpeedDropMult = 5f;
                 rollSpeed -= rollSpeed * rollSpeedDropMult * Time.deltaTime;
                 float rollSpeedDropMin = 15f;
@@ -155,14 +164,17 @@ public class CharacterController2D : MonoBehaviour
         switch (state)
         {
             case State.Normal:
+                // Установка скорости движения
                 rigidbody2D.velocity = moveDir * MoveSpeed;
                 break;
             case State.Rolling:
+                // Установка скорости ролла
                 rigidbody2D.velocity = moveDir * rollSpeed;
                 break;
         }
     }
 
+    // Применение кулдауна
     void ApplyCooldown()
     {
         cooldownTimer -= Time.deltaTime;
@@ -178,6 +190,7 @@ public class CharacterController2D : MonoBehaviour
         }   
     }
 
+    // Утилиты для работы с мышью
     public static class MouseUtils
     {
         public static Vector3 GetMouseWorldPosition()
