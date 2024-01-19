@@ -6,7 +6,7 @@ using static ProfileSelection;
 
 public class Coin : MonoBehaviour
 {
-    public int value = 1;
+    public int value = 2;
     public static event Action CoinUpdated;
     private int selectedProfileId;
     private string connectionString;
