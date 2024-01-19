@@ -24,7 +24,7 @@ public class DatabaseManager : MonoBehaviour
             }
         }
     }
-
+ // добавить монету в бд
     public void AddCoin(int amount)
     {
         // Open a connection to the database
