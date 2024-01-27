@@ -11,7 +11,7 @@ public class Hint : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (IsHintScreenVisible())
             {
