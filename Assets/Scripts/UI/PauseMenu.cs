@@ -52,7 +52,6 @@ public void CloseSettings()
 }
 
 
-
 public void QuitToMainMenu()
 {
     Time.timeScale = 1f;

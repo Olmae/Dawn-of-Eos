@@ -4,6 +4,7 @@ public class CameraMove : MonoBehaviour
 {
     // Параметры плавности следования камеры
     public float damping = 0.1f;
+    public float horizontalDamping = 0.2f; // Плавность движения влево и вправо
 
     // Отступы камеры от игрока
     public Vector2 offset = new Vector2(2f, 1f);
@@ -11,6 +12,7 @@ public class CameraMove : MonoBehaviour
     // Приватные переменные
     private Transform player;
     private Vector3 velocity = Vector3.zero;
+    private bool lastFaceLeft = false; // Переменная для запоминания последнего направления камеры
 
     private void Start()
     {
@@ -28,22 +30,31 @@ public class CameraMove : MonoBehaviour
         player = playerObject?.transform;
     }
 
-    private void LateUpdate()
+private void LateUpdate()
+{
+    // Поиск игрока только в методе LateUpdate()
+    if (player == null)
     {
-        if (player != null)
-        {
-            // Определяем направление взгляда игрока
-            bool faceLeft = player.GetComponent<Rigidbody2D>().velocity.x < -0.1f;
-
-            // Рассчитываем целевую позицию в зависимости от направления взгляда
-            Vector3 target = new Vector3(
-                player.position.x + (faceLeft ? -offset.x : offset.x),
-                player.position.y + offset.y,
-                transform.position.z
-            );
-
-            // Плавно перемещаем камеру к целевой позиции
-            transform.position = Vector3.SmoothDamp(transform.position, target, ref velocity, damping);
-        }
+        FindPlayer();
+        return; // Прерываем выполнение метода, если игрок еще не найден
     }
+
+    // Остальной код остается без изменений
+    float horizontalVelocity = player.GetComponent<Rigidbody2D>().velocity.x;
+    bool faceLeft = horizontalVelocity < -0.1f;
+
+    if (Mathf.Abs(horizontalVelocity) > 0.1f)
+    {
+        lastFaceLeft = faceLeft;
+    }
+
+    float targetX = player.position.x + (lastFaceLeft ? -offset.x : offset.x);
+    float targetY = player.position.y + offset.y;
+    float targetZ = transform.position.z;
+
+    Vector3 targetPosition = new Vector3(targetX, targetY, targetZ);
+    float smoothDamping = faceLeft || !faceLeft ? horizontalDamping : damping; 
+    transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothDamping);
+}
+
 }

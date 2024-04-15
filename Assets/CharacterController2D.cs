@@ -21,7 +21,7 @@ public class CharacterController2D : MonoBehaviour
     private float rollSpeed;
 
     [SerializeField] private LayerMask dashLayerMask;
-    [SerializeField] public Image imageCooldown;
+    public Image imageCooldown;
 
     // Параметры атаки
     public float attackRadius = 3f;
@@ -38,7 +38,7 @@ public class CharacterController2D : MonoBehaviour
     public float MoveSpeed;
     public float RollCD = 2.0f;
     private float cooldownTimer = 0.0f;
-    private float nextFire = 0; 
+    private float nextFire = 0;
     public GameObject AttackEffectPrefab;
     private bool isAttacking = false;
 
@@ -52,10 +52,12 @@ public class CharacterController2D : MonoBehaviour
     }
 
     private void Awake()
-    {
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        state = State.Normal;
-    }
+{
+    rigidbody2D = GetComponent<Rigidbody2D>();
+    state = State.Normal;
+    imageCooldown = GameObject.FindWithTag("CDUI").GetComponent<Image>();
+}
+
 
     void Update()
     {
@@ -65,7 +67,7 @@ public class CharacterController2D : MonoBehaviour
                 // Получение ввода для движения
                 float moveX = 0f;
                 float moveY = 0f;
-                
+
                 if (Input.GetKey(KeyCode.W))
                     moveY = +1f;
                 if (Input.GetKey(KeyCode.S))
@@ -88,7 +90,7 @@ public class CharacterController2D : MonoBehaviour
                         nextFire = Time.time + RollCD;
                         UnityEngine.Debug.Log("CD start");
                         isCooldown = true;
-                        cooldownTimer = 2.0f;
+                        cooldownTimer = RollCD;
                     }
                 }
 
@@ -155,6 +157,17 @@ public class CharacterController2D : MonoBehaviour
                 {
                     state = State.Normal;
                 }
+
+                // Применение кулдауна
+                cooldownTimer -= Time.deltaTime;
+                imageCooldown.fillAmount = cooldownTimer / RollCD;
+
+                if (cooldownTimer <= 0)
+                {
+                    isCooldown = false;
+                    imageCooldown.fillAmount = 0;
+                }
+
                 break;
         }
     }
@@ -174,21 +187,23 @@ public class CharacterController2D : MonoBehaviour
         }
     }
 
-    // Применение кулдауна
-    void ApplyCooldown()
-    {
-        cooldownTimer -= Time.deltaTime;
-        UnityEngine.Debug.Log("2");
-        imageCooldown.fillAmount = cooldownTimer / RollCD;
 
-        if (Time.time > nextFire)
-        {
-            isCooldown = false;
-            imageCooldown.fillAmount = 0;   
-            cooldownTimer = 0.0f;
-            UnityEngine.Debug.Log("nextfire<=0");
-        }   
-    }
+    // Применение кулдауна
+// Применение кулдауна
+void ApplyCooldown()
+{
+    cooldownTimer -= Time.deltaTime;
+    imageCooldown.fillAmount = Mathf.Clamp(cooldownTimer / RollCD, 0f, 1f); // Устанавливаем FillAmount от 0 до 1
+
+    if (cooldownTimer <= 0)
+    {
+        isCooldown = false;
+        cooldownTimer = 0.0f;
+        UnityEngine.Debug.Log("Кулдаун закончился");
+    }   
+}
+
+
 
     // Утилиты для работы с мышью
     public static class MouseUtils

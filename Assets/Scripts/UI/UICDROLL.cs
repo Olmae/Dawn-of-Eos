@@ -47,18 +47,14 @@ Debug.Log("3");
 
 public void useSpell()
 {
-
-    if(Input.GetKeyDown(KeyCode.Space))
+    if (Input.GetKeyDown(KeyCode.Space))
     {
-         Debug.Log("CDUI");
+        Debug.Log("CDUI");
         isCooldown = true;
-    }
-    else
-    {
-        isCooldown = false;
-        cooldownTimer = cooldownTime;
+        cooldownTimer = cooldownTime; // Устанавливаем время кулдауна при активации заклинания
     }
 }
+
 }
 
 
