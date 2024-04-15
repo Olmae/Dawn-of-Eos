@@ -61,20 +61,24 @@ public class Enemy : MonoBehaviour
     private float timeSinceLastPlayerPositionUpdate;
 
     // Инициализация при старте
-    private void Start()
-    {
-        maxHealth = hp;
-        mainCamera = Camera.main; // присвоить ссылку на главную камеру
-        AstarPath.active.logPathResults = PathLog.None;
-        UnityEngine.Debug.Log("Старт Энеми");
+private void Start()
+{
+    maxHealth = hp;
+    mainCamera = Camera.main; // присвоить ссылку на главную камеру
+    AstarPath.active.logPathResults = PathLog.None;
+    UnityEngine.Debug.Log("Старт Энеми");
 
-        seeker = GetComponent<Seeker>();
-        rb = GetComponent<Rigidbody2D>();
-        player = GameObject.Find("Player").transform;
-        obstacleMask = LayerMask.GetMask("Wall");
-        UpdatePathToPlayer();
-        FindPath();
-    }
+    seeker = GetComponent<Seeker>();
+    rb = GetComponent<Rigidbody2D>();
+
+    // Найти игрока по тегу "Player"
+    player = GameObject.FindGameObjectWithTag("Player").transform;
+
+    obstacleMask = LayerMask.GetMask("Wall");
+    UpdatePathToPlayer();
+    FindPath();
+}
+
 
     // Отображение здоровья над врагом
     private void OnGUI()

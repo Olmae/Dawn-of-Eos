@@ -7,11 +7,13 @@ TagManager:
   - Wall
   - Coin
   - Enemy
+  - Health
+  - CDUI
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Camera
   - Water
   - UI
   - 
@@ -20,7 +22,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Floor
   - Enemy
   - Wall
   - 
