@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9133201526527734124}
   - component: {fileID: 1278962375649610277}
   - component: {fileID: 1278962375649610282}
+  - component: {fileID: 8029334710426929515}
   m_Layer: 1
   m_Name: Light2D
   m_TagString: Untagged
@@ -47,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Range: 6.92
-  Color: {r: 0.43166727, g: 0.8018868, b: 0.39716092, a: 1}
+  Color: {r: 0.2664675, g: 0.5188679, b: 0.24230151, a: 1}
   Intensity: 0.33
   SortingLayer: Default
   SortingOrder: 99
@@ -128,5 +129,27 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 18
+  m_SortingOrder: 99
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!95 &8029334710426929515
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278962375649610280}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7c05022d4d2cb79469cb75f7e9e15d29, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

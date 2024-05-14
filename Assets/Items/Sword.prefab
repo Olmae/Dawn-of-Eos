@@ -146,8 +146,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28ba943e9d598074fa226e6d4b3c8ad6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parameterType: 2
-  improvementValue: 1
+  parameterTypes: 0200000003000000
+  improvementValues:
+  - 2
+  - 1
   pickupSound: {fileID: 8300000, guid: 7cab6e80ad3a69a468722773b282c45b, type: 3}
   price: 10
   weapon: {fileID: 11400000, guid: 65a1c952f93fc554bafe386041c76228, type: 2}
