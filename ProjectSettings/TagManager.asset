@@ -9,6 +9,13 @@ TagManager:
   - Enemy
   - Health
   - CDUI
+  - Shop
+  - BackToLocation
+  - CoinUI
+  - WeaponCollider
+  - Decor
+  - Minimap
+  - AchievementUnlock
   layers:
   - Default
   - TransparentFX
@@ -25,8 +32,8 @@ TagManager:
   - Floor
   - Enemy
   - Wall
-  - 
-  - 
+  - Decor
+  - Minimap
   - 
   - 
   - 

@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using System.Data;
 using Mono.Data.Sqlite;
-using static ProfileSelection;
 using static CharacterController2D;
 using static PlayerStat;
 

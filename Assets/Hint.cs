@@ -15,7 +15,7 @@ public class Hint : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.anyKeyDown || Input.GetMouseButtonDown(0)) // Проверяем нажатие любой клавиши или кнопки мыши с кодом 0 (левая кнопка)
         {
             if (hintVisible)
             {
@@ -30,6 +30,8 @@ public class Hint : MonoBehaviour
             return;
         }
     }
+
+
 
     void ShowHintScreen()
     {

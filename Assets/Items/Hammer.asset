@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a5c51e2d96538b48936540c31419af2, type: 3}
+  m_Name: Hammer
+  m_EditorClassIdentifier: 
+  weaponSprite: {fileID: -9095717837082945937, guid: ac9d0e7e62dc7c34a896805201bc53f8, type: 3}
+  weaponName: Hammer
+  attackDamage: 2
+  attackRadius: 2
+  areaDamage: 1
+  areaRadius: 3
+  areaAttackOn: 1
+  attackCooldown: 0.8
+  attackSound: {fileID: 0}
+  attackSpeed: 1
+  attackDuration: 1
+  attackEffect: {fileID: 4377205339190645838, guid: bab68e51a1cf55445ae5117b6aa205bf, type: 3}
+  attackAnimationLength: 0

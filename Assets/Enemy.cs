@@ -15,6 +15,8 @@ public class Enemy : MonoBehaviour
     public float visibilityRange = 10f;
     public float viewDistance = 10.0f;
     public LayerMask viewMask;
+    private LayerMask decorLayerMask;
+
 
     // Компоненты для поиска пути и управления движением
     private Seeker seeker;
@@ -63,6 +65,8 @@ public class Enemy : MonoBehaviour
     // Инициализация при старте
 private void Start()
 {
+    decorLayerMask = LayerMask.GetMask("DecorLayer");
+
     maxHealth = hp;
     mainCamera = Camera.main; // присвоить ссылку на главную камеру
     AstarPath.active.logPathResults = PathLog.None;
@@ -102,14 +106,15 @@ private void Start()
     }
 
     // Обработчик завершения поиска пути
-    private void OnPathComplete(Path p)
+private void OnPathComplete(Path p)
+{
+    if (!p.error)
     {
-        if (!p.error)
-        {
-            path = p;
-            currentWaypoint = 0;
-        }
+        path = p;
+        currentWaypoint = 0; // Сброс текущей позиции пути
     }
+}
+
 
     // Обновление в каждом кадре
     private void Update()
@@ -158,7 +163,7 @@ private void Start()
         }
 
         // Проверка, есть ли препятствия на линии видимости к игроку
-        RaycastHit2D hit = Physics2D.Linecast(transform.position, player.position, obstacleMask);
+        RaycastHit2D hit = Physics2D.Linecast(transform.position, player.position, obstacleMask | decorLayerMask);
         if (hit.collider != null)
         {
             UpdatePathToLastPlayerPosition();
@@ -251,7 +256,7 @@ private void Start()
         }
 
         // Проверка наличия препятствий на линии видимости к игроку
-        RaycastHit2D hit = Physics2D.Linecast(transform.position, player.position, obstacleMask);
+        RaycastHit2D hit = Physics2D.Linecast(transform.position, player.position, obstacleMask | decorLayerMask);
         if (hit.collider != null)
         {
             UpdatePathToLastPlayerPosition();
@@ -281,20 +286,20 @@ private void Start()
     }
 
     // Обновление пути к последней известной позиции игрока
-    void UpdatePathToLastPlayerPosition()
-    {
-        if (Time.time - timeSinceLastPathRecalculation > pathRecalculationInterval)
-        {
-            seeker.StartPath(transform.position, player.position, OnPathComplete);
-            timeSinceLastPathRecalculation = Time.time;
-        }
-    }
+void UpdatePathToLastPlayerPosition()
+{
+    seeker.StartPath(transform.position, player.position, OnPathComplete);
+    currentWaypoint = 0; // Сброс текущей позиции пути
+}
+
 
     // Обновление пути к игроку
-    private void UpdatePathToPlayer()
-    {
-        seeker.StartPath(transform.position, player.position, OnPathComplete);
-    }
+void UpdatePathToPlayer()
+{
+    seeker.StartPath(transform.position, player.position, OnPathComplete);
+    currentWaypoint = 0; // Сброс текущей позиции пути
+}
+
 
     // Обработчик изменения позиции игрока
     private void OnPlayerPositionChanged()
@@ -328,11 +333,15 @@ private void Start()
     }
 
     // Смерть врага
-    private void Die()
-    {
-        GameObject coin = Instantiate(coinPrefab, transform.position, Quaternion.identity);
-        Coin script = coin.GetComponent<Coin>();
-        script.value = coinValue;
-        Destroy(gameObject);
-    }
+private void Die()
+{
+    GameObject coin = Instantiate(coinPrefab, transform.position, Quaternion.identity);
+    Coin script = coin.GetComponent<Coin>();
+    script.value = coinValue;
+    Destroy(gameObject);
+
+    // Добавление убийства в счетчик
+    PlayerStat playerStat = player.GetComponent<PlayerStat>();
+    playerStat.AddKill();
+}
 }
