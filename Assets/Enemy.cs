@@ -58,6 +58,9 @@ public class Enemy : MonoBehaviour
     // Объекты для выпадения монет
     public GameObject coinPrefab;
     public int coinValue = 1;
+private bool isPlayerVisible = false; // Флаг, показывающий, видит ли враг игрока
+private float timeSinceLastSawPlayer = 0f; // Время с момента последней видимости игрока
+private float timeToForgetPlayer = 5f; // Время, через которое враг забудет игрока после потери видимости
 
     private Vector2 lastPlayerPosition;
     private float timeSinceLastPlayerPositionUpdate;
@@ -119,37 +122,44 @@ private void OnPathComplete(Path p)
     // Обновление в каждом кадре
     private void Update()
     {
-        // Проверка наличия игрока
-        if (player == null)
-        {
-            return;
-        }
+           // Проверка наличия игрока
+    if (player == null)
+    {
+        return;
+    }
 
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+    float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-        // Проверка, находится ли игрок в пределах атаки
-        if (distanceToPlayer <= attackRange)
+    // Проверка, видит ли враг игрока
+    if (distanceToPlayer <= visibilityRange && CanSeePlayer())
+    {
+        // Установка флага видимости игрока
+        isPlayerVisible = true;
+        timeSinceLastSawPlayer = Time.time; // Обновление времени последней видимости игрока
+        FindPathToPlayer(); // Найти путь к игроку
+    }
+    else
+    {
+        // Если враг не видит игрока, но видел его ранее
+        if (isPlayerVisible)
         {
-            // Атака игрока
-            if (attackStartTimer >= attackStartDelay)
+            // Если прошло достаточно времени с момента последней видимости игрока
+            if (Time.time - timeSinceLastSawPlayer > timeToForgetPlayer)
             {
-                // Проверка, не находится ли враг в состоянии задержки урона
-                if (!isTakingDamage)
-                {
-                    attackTimer += Time.deltaTime;
-                    if (attackTimer >= attackDelay)
-                    {
-                        Attack();
-                        attackTimer = 0f;
-                    }
-                }
+                isPlayerVisible = false; // Сброс флага видимости игрока
             }
             else
             {
-                attackStartTimer += Time.deltaTime;
+                // Враг ещё помнит игрока, поэтому обновляем путь
+                FindPathToLastKnownPlayerPosition();
             }
-            return;
         }
+        else
+        {
+            // Если враг не видит игрока и не помнит его, обновляем путь к последней известной позиции игрока
+            FindPathToLastKnownPlayerPosition();
+        }
+    }
 
         // Получение урона
         if (isTakingDamage)
@@ -290,6 +300,32 @@ void UpdatePathToLastPlayerPosition()
 {
     seeker.StartPath(transform.position, player.position, OnPathComplete);
     currentWaypoint = 0; // Сброс текущей позиции пути
+}
+
+// Метод для проверки, видит ли враг игрока
+private bool CanSeePlayer()
+{
+    Vector2 directionToPlayer = player.position - transform.position;
+    float distanceToPlayer = directionToPlayer.magnitude;
+
+    // Проверка, находится ли игрок в пределах дистанции видимости и не закрывается ли ему препятствие
+    if (distanceToPlayer <= visibilityRange && !Physics2D.Raycast(transform.position, directionToPlayer.normalized, distanceToPlayer, obstacleMask))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+// Метод для поиска пути к последней известной позиции игрока
+private void FindPathToLastKnownPlayerPosition()
+{
+    seeker.StartPath(transform.position, lastKnownPlayerPosition, OnPathComplete);
+}
+// Метод для поиска пути к игроку
+private void FindPathToPlayer()
+{
+    seeker.StartPath(transform.position, player.position, OnPathComplete);
 }
 
 

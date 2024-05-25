@@ -1,18 +1,16 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class Item1 : MonoBehaviour
+public class BowItem : MonoBehaviour
 {
-    // Список параметров, которые можно улучшать
+    // Типы улучшаемых параметров
     public enum ParameterType
     {
         Damage,
-        Health,
-        Speed,
-        RollCooldown // Новый тип параметра для улучшения Cooldown
+        ReloadSpeed // Новый тип параметра для улучшения скорости перезарядки
     }
 
-    // Типы улучшаемых параметров
+    // Параметры улучшения
     public ParameterType[] parameterTypes;
 
     // Значения улучшения параметров
@@ -24,9 +22,9 @@ public class Item1 : MonoBehaviour
     // Цена предмета
     public int price = 10;
 
-    public Weapon weapon;
+    public Bow bow;
 
-    // Добавляем ссылки на аудиомикшер и группу SFX
+    // Аудиомикшер и группа SFX
     public AudioMixer audioMixer;
     public AudioMixerGroup sfxGroup;
 
@@ -60,16 +58,10 @@ public class Item1 : MonoBehaviour
                 switch (parameterTypes[i])
                 {
                     case ParameterType.Damage:
-                        characterController.attackDamage += improvementValues[i];
+                        bow.arrowDamage += improvementValues[i];
                         break;
-                    case ParameterType.Health:
-                        playerStat.maxHealth += improvementValues[i];
-                        break;
-                    case ParameterType.Speed:
-                        characterController.MoveSpeed += improvementValues[i];
-                        break;
-                    case ParameterType.RollCooldown:
-                        characterController.RollCD -= improvementValues[i]; // Уменьшаем Cooldown на значение improvementValues[i]
+                    case ParameterType.ReloadSpeed:
+                        bow.reloadTime -= improvementValues[i]; // Уменьшаем время перезарядки на значение improvementValues[i]
                         break;
                 }
             }
@@ -80,13 +72,10 @@ public class Item1 : MonoBehaviour
                 PlaySound(pickupSound);
             }
 
-            // Устанавливаем выбранное оружие в скрипте персонажа
+            // Устанавливаем выбранный лук в скрипте персонажа
             if (characterController != null)
             {
-                characterController.currentWeapon = weapon;
-
-                // Обновляем спрайт оружия у персонажа
-                characterController.UpdateWeaponSprite(weapon.weaponSprite);
+                characterController.currentBow = bow;
             }
 
             // Уничтожаем объект предмета после подбора

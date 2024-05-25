@@ -15,7 +15,7 @@ public class Hint : MonoBehaviour
 
     void Update()
     {
-        if (Input.anyKeyDown || Input.GetMouseButtonDown(0)) // Проверяем нажатие любой клавиши или кнопки мыши с кодом 0 (левая кнопка)
+        if (Input.GetKeyDown(KeyCode.H)) // Проверяем нажатие любой клавиши или кнопки мыши с кодом 0 (левая кнопка)
         {
             if (hintVisible)
             {
@@ -29,6 +29,8 @@ public class Hint : MonoBehaviour
             // Блокируем нажатие ESCAPE, если подсказка видима
             return;
         }
+                        if (Input.anyKeyDown)
+                            {panel.SetActive(false);} // выключаем экран с подсказкой
     }
 
 
@@ -42,11 +44,14 @@ public class Hint : MonoBehaviour
 
     void HidePanel()
     {
-        StartCoroutine(FadeOut(panel, 1f)); // Запускаем корутину для плавного исчезновения панели
+
+
+        StartCoroutine(FadeOut(panel, 0.3f)); // Запускаем корутину для плавного исчезновения панели
         hintVisible = false; // Устанавливаем флаг, что подсказка больше не видна
                 hintScreen.SetActive(false); // выключаем экран с подсказкой
-
     }
+
+
 
     void ResumeGame()
     {

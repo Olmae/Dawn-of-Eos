@@ -16,6 +16,9 @@ TagManager:
   - Decor
   - Minimap
   - AchievementUnlock
+  - Undefined
+  - Die
+  - ArrowCountUI
   layers:
   - Default
   - TransparentFX

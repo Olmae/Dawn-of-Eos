@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Pathfinding; // Добавьте это в начало файла
 
 public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
 {
@@ -43,8 +44,14 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         
         // Запускаем процесс создания новой локации
         RunProceduralGeneration();
-    }
 
+        Invoke("ScanPathfinding", 2f);
+
+    }
+    private void ScanPathfinding()
+    {
+        AstarPath.active.Scan();
+    }
     private void RemoveOldLocation()
     {
         // Удаляем все дочерние объекты текущего объекта
@@ -141,6 +148,9 @@ SpawnEnemiesRandomly(roomCenters, enemiesContainer, desiredEnemyCount);
 
     tilemapVisualizer.PaintFloorTiles(floor);
     WallGenerator.CreateWalls(floor, tilemapVisualizer);
+
+    AstarPath.active.Scan();
+    Debug.Log("A* scan completed.");
 }
 
 
@@ -170,63 +180,61 @@ private Vector2Int GetRandomRoomCenter(Vector2Int originalCenter, int maxOffset)
 
 private void SpawnEnemiesRandomly(List<Vector2Int> roomCenters, GameObject enemiesContainer, int desiredEnemyCount)
 {
+    bool playerRoomChecked = false; // Переменная для отслеживания проверки комнаты с игроком
     foreach (Vector2Int center in roomCenters)
     {
-        // Проверяем, что центр комнаты не находится на исключенной тайлмапе
-        if (!IsTileInExcludedTilemap(center))
+        // Проверяем, что центр комнаты не совпадает с позицией игрока
+        if (center != playerPosition || playerRoomChecked)
         {
-            // Проверяем, что центр комнаты не совпадает с позицией игрока
-            if (center != playerPosition)
+            // Проверяем, что центр комнаты не совпадает с центром уже созданной комнаты
+            bool isCenterValid = true;
+            foreach (Vector2Int existingCenter in roomCenters)
             {
-                // Проверяем, что центр комнаты не совпадает с центром уже созданной комнаты
-                bool isCenterValid = true;
-                foreach (Vector2Int existingCenter in roomCenters)
+                if (center == existingCenter && center != existingCenter)
                 {
-                    if (center == existingCenter && center != existingCenter) // Тут ошибка, нужно убрать второе условие
-                    {
-                        isCenterValid = false;
-                        break;
-                    }
+                    isCenterValid = false;
+                    break;
                 }
+            }
 
-                if (isCenterValid)
+            if (isCenterValid)
+            {
+                // Рандомное решение о спавне врага
+                if (Random.Range(0f, 1f) < enemySpawnChance)
                 {
-                    // Рандомное решение о спавне врага
-                    if (Random.Range(0f, 1f) < enemySpawnChance)
+                    // Генерируем позицию для спавна врага в пределах комнаты
+                    Vector2 spawnPosition = GetRandomSpawnPosition(center);
+                    if (spawnPosition != Vector2.zero)
                     {
-                        // Генерируем позицию для спавна врага в пределах комнаты
-                        Vector2 spawnPosition = GetRandomSpawnPosition(center);
-                        if (spawnPosition != Vector2.zero)
+                        GameObject enemyPrefab = GetRandomEnemyPrefab();
+                        if (enemyPrefab != null)
                         {
-                            GameObject enemyPrefab = GetRandomEnemyPrefab();
-                            if (enemyPrefab != null)
-                            {
-                                GameObject enemy = Instantiate(enemyPrefab, new Vector3(spawnPosition.x, spawnPosition.y, 0), Quaternion.identity);
-                                enemy.transform.SetParent(enemiesContainer.transform);
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogError("Unable to find valid spawn position for enemy in room at: " + center);
+                            GameObject enemy = Instantiate(enemyPrefab, new Vector3(spawnPosition.x, spawnPosition.y, 0), Quaternion.identity);
+                            enemy.transform.SetParent(enemiesContainer.transform);
                         }
                     }
-                }
-                else
-                {
-                    Debug.LogError("Center of room at: " + center + " is not valid for enemy spawn due to existing room.");
+                    else
+                    {
+                        Debug.LogError("Unable to find valid spawn position for enemy in room at: " + center);
+                    }
                 }
             }
             else
             {
-                Debug.LogError("Player position matches center of room at: " + center + ". Skipping enemy spawn in this room.");
+                Debug.LogError("Center of room at: " + center + " is not valid for enemy spawn due to existing room.");
             }
         }
         else
         {
-            Debug.LogError("Center of room at: " + center + " is on excluded tilemap. Skipping enemy spawn in this room.");
+            // Если комната с игроком, то помечаем ее как проверенную
+            playerRoomChecked = true;
         }
+
     }
 }
+
+
+
 
 private Vector2 GetRandomSpawnPosition(Vector2Int roomCenter)
 {
@@ -282,6 +290,8 @@ private void SpawnBoxesRandomly(List<Vector2Int> roomCenters, GameObject boxesCo
                 boxCount--;
             }
         }
+                        AstarPath.active.Scan();
+
     }
 }
 
@@ -292,6 +302,8 @@ private void SpawnBoxesRandomly(List<Vector2Int> roomCenters, GameObject boxesCo
         TileBase tile = excludedTilemap.GetTile((Vector3Int)tilePosition);
         // Если тайл не равен null, значит позиция находится на исключенной тайлмапе
         return tile != null;
+                        AstarPath.active.Scan();
+
     }
 
     // Остальные методы остаются без изменений
@@ -397,6 +409,8 @@ private HashSet<Vector2Int> CreateCorridor(Vector2Int currentRoomCenter, Vector2
                     floor.Add(position);
                 }
             }
+                            AstarPath.active.Scan();
+
         }
         return floor;
     }

@@ -41,18 +41,31 @@ public class PlayerStat : MonoBehaviour
     public Text achievementsText;
 
     [Header("UI")]
-    public GameObject pauseMenu;
+    public DeathPauseManager deathPauseManager; // Ссылка на менеджер смерти и пауз-меню
     public string achievementTextTag = "AchievementUnlock"; // Тег для поиска текстового поля с достижениями
 
-    private void Start()
-    {
-        currentHealth = maxHealth;
-        healthText = GameObject.FindGameObjectWithTag("Health").GetComponent<Text>();
-        moneyText = GameObject.FindGameObjectWithTag("CoinUI").GetComponent<Text>(); 
-        achievementsText = GameObject.FindGameObjectWithTag(achievementTextTag).GetComponent<Text>(); // Находим текст по тегу
-        LoadSavedData();
-        
-    }
+private void Start()
+{
+    GameObject deathPauseManagerObject = GameObject.FindGameObjectWithTag("Die");
+        if (deathPauseManagerObject != null)
+        {
+            deathPauseManager = deathPauseManagerObject.GetComponent<DeathPauseManager>();
+        }
+        else
+        {
+            Debug.LogError("Death Pause Manager object not found with tag 'Die'");
+        }
+
+    currentHealth = maxHealth;
+    healthText = GameObject.FindGameObjectWithTag("Health").GetComponent<Text>();
+    moneyText = GameObject.FindGameObjectWithTag("CoinUI").GetComponent<Text>(); 
+
+    achievementsText = GameObject.FindGameObjectWithTag(achievementTextTag).GetComponent<Text>(); // Находим текст по тегу
+    LoadSavedData();
+}
+
+
+
 
 private void LoadSavedData()
     {
@@ -122,14 +135,19 @@ private void LoadSavedData()
 
     public void Update(){
         CheckKillAchievements();
+            
+
     }
 
-    private void Die()
+ private void Die()
     {
-        pauseMenu.SetActive(true);
-        Time.timeScale = 0f;
-        Debug.Log("die");
+            deathPauseManager.ShowPauseMenu(); // Вызываем пауз-меню при смерти
     }
+
+
+
+
+
 
     public void Restart()
     {

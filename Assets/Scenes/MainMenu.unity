@@ -1508,7 +1508,7 @@ GameObject:
   - component: {fileID: 284848503}
   - component: {fileID: 284848504}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Music
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1933,7 +1933,7 @@ AudioSource:
   m_GameObject: {fileID: 364677692}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4605257054062381240, guid: 7825e6e4763dd164390af14a4a885e0f, type: 2}
   m_audioClip: {fileID: 8300000, guid: e85b4c13e91a4b74583d16a8059d35e6, type: 3}
   m_Resource: {fileID: 8300000, guid: e85b4c13e91a4b74583d16a8059d35e6, type: 3}
   m_PlayOnAwake: 0
@@ -2368,7 +2368,7 @@ GameObject:
   - component: {fileID: 396784293}
   - component: {fileID: 396784294}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Master
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2766,7 +2766,7 @@ AudioSource:
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 530305404437573231, guid: 7825e6e4763dd164390af14a4a885e0f, type: 2}
   m_audioClip: {fileID: 8300000, guid: f2f76c1a734d2894c944f5877daa0252, type: 3}
   m_Resource: {fileID: 8300000, guid: f2f76c1a734d2894c944f5877daa0252, type: 3}
   m_PlayOnAwake: 1
@@ -3368,7 +3368,7 @@ GameObject:
   - component: {fileID: 732384775}
   - component: {fileID: 732384776}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: SFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4319,6 +4319,7 @@ GameObject:
   - component: {fileID: 1104863545}
   - component: {fileID: 1104863544}
   - component: {fileID: 1104863546}
+  - component: {fileID: 1104863547}
   m_Layer: 5
   m_Name: "\u041E\u041A\u041D\u041E\u041D\u0410\u0421\u0422\u0420\u041E\u0419\u041A\u0418"
   m_TagString: Untagged
@@ -4407,6 +4408,22 @@ MonoBehaviour:
   applyButton: {fileID: 146024377}
   fullscreenToggle: {fileID: 1064385450}
   volumeSlider: {fileID: 396784294}
+--- !u!114 &1104863547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104863541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac18842a776ed084b9a00b910003c606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: 7825e6e4763dd164390af14a4a885e0f, type: 2}
+  masterSlider: {fileID: 396784294}
+  musicSlider: {fileID: 284848504}
+  sfxSlider: {fileID: 732384776}
 --- !u!1 &1149693226
 GameObject:
   m_ObjectHideFlags: 0

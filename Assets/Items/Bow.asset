@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f510613bf1e6434cb435b8f330c0901, type: 3}
+  m_Name: Bow
+  m_EditorClassIdentifier: 
+  bowSprite: {fileID: -9197134654715703934, guid: 8a8be3388261554448438f186103ae28, type: 3}
+  bowName: "\u041B\u0443\u0447\u043E\u043A"
+  arrowDamage: 0.5
+  arrowSpeed: 10
+  shootSound: {fileID: 8300000, guid: a2306adbe6c28d248927710671a924b3, type: 3}
+  arrowPrefab: {fileID: 4668589698768089051, guid: 26a1d75a7a4ba3243992b90fd918183a, type: 3}
+  reloadTime: 1
+  maxRange: 20

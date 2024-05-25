@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class CharacterController2D : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class CharacterController2D : MonoBehaviour
     }
 
     private State state; // Объявление переменной state
+    public BowController bowController;
 
     // Компоненты и переменные для управления персонажем
     [Header("Movement")]
@@ -42,6 +44,12 @@ public class CharacterController2D : MonoBehaviour
     public GameObject AttackEffectPrefab;
     private bool hasAttacked = false;
     public Collider2D weaponCollider;
+    public Bow currentBow; // Текущий лук
+public GameObject objectToDisableOnLMB;
+public GameObject objectToEnableOnLMB;
+public GameObject objectToDisableOnRMB;
+public GameObject objectToEnableOnRMB;
+
 
 
 
@@ -71,6 +79,10 @@ public class CharacterController2D : MonoBehaviour
     // Animator
     public Animator animator;
 
+    [Header("AudioMixer")]
+
+    public AudioMixer audioMixer;
+    public AudioMixerGroup sfxGroup;
 void Start()
 {
     rigidbody2D = GetComponent<Rigidbody2D>();
@@ -146,6 +158,39 @@ public void UpdateWeaponSprite(Sprite weaponSprite)
 }
 
 
+public void UseBow()
+{
+    if (currentBow != null && bowController != null)
+    {
+        if (!bowController.IsReloading)
+        {
+            bowController.ShootArrow();
+        }
+        else
+        {
+            Debug.Log("Лук еще перезаряжается!");
+        }
+    }
+    else
+    {
+        Debug.Log("Лук не выбран или контроллер лука не найден!");
+    }
+}
+
+
+
+    public void UseWeapon()
+    {
+        if (currentWeapon != null)
+        {
+            // Здесь может быть логика использования другого оружия
+            Debug.Log("Используем другое оружие!");
+        }
+        else
+        {
+            Debug.Log("Оружие не выбрано!");
+        }
+    }
 
 
     void Update()
@@ -215,6 +260,11 @@ public void UpdateWeaponSprite(Sprite weaponSprite)
         // Обновляем флаг wasMoving на текущее состояние движения
         wasMoving = moveDir != Vector3.zero;
 
+    if (Input.GetKeyDown(KeyCode.Mouse1))
+    {
+        ToggleObjectsOnRMB();
+        UseBow();
+    }
 
             // Проверка на использование атаки по области
             if (Input.GetKeyDown(KeyCode.Q))
@@ -227,7 +277,7 @@ public void UpdateWeaponSprite(Sprite weaponSprite)
                     // Проигрываем звук атаки
                     if (currentWeapon != null && currentWeapon.attackSound != null)
                     {
-                        AudioSource.PlayClipAtPoint(currentWeapon.attackSound, transform.position);
+                            PlaySound(currentWeapon.attackSound);
                     }
 
                     // Устанавливаем параметры атаки
@@ -265,35 +315,44 @@ public void UpdateWeaponSprite(Sprite weaponSprite)
 
                 // Проверка на возможность атаки
                 if (Input.GetMouseButtonDown(0) && Time.time >= nextAttackTime && !isAttacking)
-                {
-                    // Начинаем атаку
-                    isAttacking = true;
-
-                    // Проигрываем звук атаки
-                    if (currentWeapon != null && currentWeapon.attackSound != null)
                     {
-                        AudioSource.PlayClipAtPoint(currentWeapon.attackSound, transform.position);
+                        // Начинаем атаку
+                        isAttacking = true;
+
+                        // Проигрываем звук атаки
+                        if (currentWeapon != null && currentWeapon.attackSound != null)
+                        {
+                            PlaySound(currentWeapon.attackSound);
+                        }
+                        ToggleObjectsOnLMB();
+                        // Устанавливаем параметры атаки
+                        nextAttackTime = Time.time + currentWeapon.attackCooldown;
+                        animator.SetBool("Attack", true);
+                        attackAnimationTime = Time.time + currentWeapon.attackDuration;
+
+                        // Передаем параметры атаки оружия
+                        attackRadius = currentWeapon.attackRadius;
+                        attackDamage = currentWeapon.attackDamage;
+
+                        // Устанавливаем скорость атаки в аниматоре
+                        float attackSpeed = currentWeapon.attackSpeed;
+                        float animationSpeed = 1.0f / attackSpeed; // Вычисляем скорость анимации в обратной пропорции к скорости атаки
+                        animator.SetFloat("Speed", animationSpeed);
+
+                        // Сбрасываем флаг перед новой атакой
+                        hasDealtDamage = false;
                     }
 
-                    // Устанавливаем параметры атаки
-                    nextAttackTime = Time.time + currentWeapon.attackCooldown;
-                    animator.SetBool("Attack", true);
-                    attackAnimationTime = Time.time + currentWeapon.attackDuration; // Устанавливаем длительность анимации равной длительности атаки оружия
+                    void PlaySound(AudioClip clip)
+                        {
+                            GameObject soundObject = new GameObject("AttackSound");
+                            AudioSource audioSource = soundObject.AddComponent<AudioSource>();
+                            audioSource.clip = clip;
+                            audioSource.outputAudioMixerGroup = sfxGroup;
+                            audioSource.Play();
 
-                    // Передаем параметры атаки оружия
-                    attackRadius = currentWeapon.attackRadius;
-                    attackDamage = currentWeapon.attackDamage;
-
-                    // Устанавливаем скорость атаки в аниматоре
-                    float attackSpeed = currentWeapon.attackSpeed;
-                    float animationSpeed = 1.0f / attackSpeed; // Вычисляем скорость анимации в обратной пропорции к скорости атаки
-                    animator.SetFloat("Speed", animationSpeed);
-
-                    // Сбрасываем флаг перед новой атакой
-                    hasDealtDamage = false;
-                }
-
-
+                            Destroy(soundObject, clip.length);
+                        }
 
                // Проигрываем анимацию атаки и наносим урон врагам
                 if (isAttacking)
@@ -373,7 +432,29 @@ private void DealDamageToEnemies()
     }
 }
 
+private void ToggleObjectsOnLMB()
+{
+    if (objectToDisableOnLMB != null)
+    {
+        objectToDisableOnLMB.SetActive(false);
+    }
+    if (objectToEnableOnLMB != null)
+    {
+        objectToEnableOnLMB.SetActive(true);
+    }
+}
 
+private void ToggleObjectsOnRMB()
+{
+    if (objectToDisableOnRMB != null)
+    {
+        objectToDisableOnRMB.SetActive(false);
+    }
+    if (objectToEnableOnRMB != null)
+    {
+        objectToEnableOnRMB.SetActive(true);
+    }
+}
 
     private void FixedUpdate()
     {
