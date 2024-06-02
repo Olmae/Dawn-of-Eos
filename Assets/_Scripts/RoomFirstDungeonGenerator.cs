@@ -45,7 +45,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         // Запускаем процесс создания новой локации
         RunProceduralGeneration();
 
-        Invoke("ScanPathfinding", 2f);
+        Invoke("ScanPathfinding", 0.2f);
 
     }
     private void ScanPathfinding()
@@ -99,10 +99,16 @@ private void CreateRooms()
         floor = CreateSimpleRooms(roomsList);
     }
     
-    foreach (var room in roomsList)
+Vector2Int playerRoomPosition = Vector2Int.zero;
+foreach (var room in roomsList)
+{
+    roomCenters.Add((Vector2Int)Vector3Int.RoundToInt(room.center));
+    if ((Vector2Int)Vector3Int.RoundToInt(room.center) == playerPosition)
     {
-        roomCenters.Add((Vector2Int)Vector3Int.RoundToInt(room.center));
+        playerRoomPosition = (Vector2Int)Vector3Int.RoundToInt(room.center);
     }
+}
+
 
     // Создаем световые префабы на каждой локации и устанавливаем их родительский объект
     foreach (var center in roomCenters)
@@ -202,21 +208,26 @@ private void SpawnEnemiesRandomly(List<Vector2Int> roomCenters, GameObject enemi
                 // Рандомное решение о спавне врага
                 if (Random.Range(0f, 1f) < enemySpawnChance)
                 {
-                    // Генерируем позицию для спавна врага в пределах комнаты
-                    Vector2 spawnPosition = GetRandomSpawnPosition(center);
-                    if (spawnPosition != Vector2.zero)
-                    {
-                        GameObject enemyPrefab = GetRandomEnemyPrefab();
-                        if (enemyPrefab != null)
+                    // Проверяем, что комната не является комнатой с игроком
+                    if (center != playerPosition)
                         {
-                            GameObject enemy = Instantiate(enemyPrefab, new Vector3(spawnPosition.x, spawnPosition.y, 0), Quaternion.identity);
-                            enemy.transform.SetParent(enemiesContainer.transform);
+                            // Генерируем позицию для спавна врага в пределах комнаты
+                            Vector2 spawnPosition = GetRandomSpawnPosition(center);
+                            if (spawnPosition != Vector2.zero && !IsTileInExcludedTilemap(Vector2Int.RoundToInt(spawnPosition)))
+                            {
+                                GameObject enemyPrefab = GetRandomEnemyPrefab();
+                                if (enemyPrefab != null)
+                                {
+                                    GameObject enemy = Instantiate(enemyPrefab, new Vector3(spawnPosition.x, spawnPosition.y, 0), Quaternion.identity);
+                                    enemy.transform.SetParent(enemiesContainer.transform);
+                                }
+                            }
+                            else
+                            {
+                                Debug.LogError("Unable to find valid spawn position for enemy in room at: " + center);
+                            }
                         }
-                    }
-                    else
-                    {
-                        Debug.LogError("Unable to find valid spawn position for enemy in room at: " + center);
-                    }
+
                 }
             }
             else
@@ -229,9 +240,10 @@ private void SpawnEnemiesRandomly(List<Vector2Int> roomCenters, GameObject enemi
             // Если комната с игроком, то помечаем ее как проверенную
             playerRoomChecked = true;
         }
-
     }
 }
+
+
 
 
 
@@ -308,38 +320,39 @@ private void SpawnBoxesRandomly(List<Vector2Int> roomCenters, GameObject boxesCo
 
     // Остальные методы остаются без изменений
 
-    private HashSet<Vector2Int> ConnectRooms(List<Vector2Int> roomCenters)
+private HashSet<Vector2Int> ConnectRooms(List<Vector2Int> roomCenters)
+{
+    HashSet<Vector2Int> corridors = new HashSet<Vector2Int>();
+    var currentRoomCenter = roomCenters[Random.Range(0, roomCenters.Count)];
+    roomCenters.Remove(currentRoomCenter);
+
+    while (roomCenters.Count > 0)
     {
-        HashSet<Vector2Int> corridors = new HashSet<Vector2Int>();
-        var currentRoomCenter = roomCenters[Random.Range(0, roomCenters.Count)];
-        roomCenters.Remove(currentRoomCenter);
+        Vector2Int closest = FindClosestPointTo(currentRoomCenter, roomCenters);
+        roomCenters.Remove(closest);
+        HashSet<Vector2Int> newCorridor = CreateCorridor(currentRoomCenter, closest);
 
-        while (roomCenters.Count > 0)
+        foreach (var point in newCorridor)
         {
-            Vector2Int closest = FindClosestPointTo(currentRoomCenter, roomCenters);
-            roomCenters.Remove(closest);
-            HashSet<Vector2Int> newCorridor = CreateCorridor(currentRoomCenter, closest);
+            corridors.Add(point);
+            corridors.Add(point + new Vector2Int(0, 1));
 
-            foreach (var point in newCorridor)
+            if (point.x == closest.x)
             {
-                corridors.Add(point);
-                corridors.Add(point + new Vector2Int(0, 1));
-
-                if (point.x == closest.x)
-                {
-                    corridors.Add(point + new Vector2Int(1, 0));
-                    corridors.Add(point + new Vector2Int(-1, 0));
-                }
+                corridors.Add(point + new Vector2Int(1, 0));
+                corridors.Add(point + new Vector2Int(-1, 0));
             }
-
-            // Создаем коридор к новой комнате
-            HashSet<Vector2Int> corridorToRoom = CreateCorridor(currentRoomCenter, closest);
-            corridors.UnionWith(corridorToRoom);
-
-            currentRoomCenter = closest;
         }
-        return corridors;
+
+        // Создаем коридор к новой комнате
+        HashSet<Vector2Int> corridorToRoom = CreateCorridor(currentRoomCenter, closest);
+        corridors.UnionWith(corridorToRoom);
+
+        currentRoomCenter = closest;
     }
+    return corridors;
+}
+
 
 private HashSet<Vector2Int> CreateCorridor(Vector2Int currentRoomCenter, Vector2Int destination)
 {
@@ -394,26 +407,32 @@ private HashSet<Vector2Int> CreateCorridor(Vector2Int currentRoomCenter, Vector2
         return closest;
     }
 
-    private HashSet<Vector2Int> CreateSimpleRooms(List<BoundsInt> roomsList)
+private HashSet<Vector2Int> CreateSimpleRooms(List<BoundsInt> roomsList)
+{
+    HashSet<Vector2Int> floor = new HashSet<Vector2Int>();
+    foreach (var room in roomsList)
     {
-        HashSet<Vector2Int> floor = new HashSet<Vector2Int>();
-        foreach (var room in roomsList)
-        {
-                var roomCenter = GetRandomRoomCenter(new Vector2Int(Mathf.FloorToInt(room.center.x), Mathf.FloorToInt(room.center.y)), 2);
+        var roomCenter = GetRandomRoomCenter(new Vector2Int(Mathf.FloorToInt(room.center.x), Mathf.FloorToInt(room.center.y)), 2);
 
-            for (int col = offset; col < room.size.x - offset; col++)
+        for (int col = offset; col < room.size.x - offset; col++)
+        {
+            for (int row = offset; row < room.size.y - offset; row++)
             {
-                for (int row = offset; row < room.size.y - offset; row++)
+                Vector2Int position = (Vector2Int)room.min + new Vector2Int(col, row);
+
+                // Добавляем позицию только если она не находится на границе комнаты,
+                // где должны быть стены
+                if (col > offset && col < room.size.x - offset - 1 &&
+                    row > offset && row < room.size.y - offset - 1)
                 {
-                    Vector2Int position = (Vector2Int)room.min + new Vector2Int(col, row);
                     floor.Add(position);
                 }
             }
-                            AstarPath.active.Scan();
-
         }
-        return floor;
     }
+    return floor;
+}
+
 
     private HashSet<Vector2Int> CreateRoomsRandomly(List<BoundsInt> roomsList)
     {

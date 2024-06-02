@@ -19,6 +19,8 @@ TagManager:
   - Undefined
   - Die
   - ArrowCountUI
+  - Boss
+  - Boss Move
   layers:
   - Default
   - TransparentFX

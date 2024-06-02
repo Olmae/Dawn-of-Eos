@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 8108008695055409437}
   - component: {fileID: 2149692940909463748}
   m_Layer: 13
-  m_Name: Enemy
+  m_Name: Fire
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -207,7 +207,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 59
-  m_Sprite: {fileID: -1647260217, guid: 31d3ffcb247e27b47b9ab02eb97377fe, type: 3}
+  m_Sprite: {fileID: -846445609, guid: 31d3ffcb247e27b47b9ab02eb97377fe, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -298,7 +298,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.3, y: 0.56}
+    oldSize: {x: 0.05, y: 0.09}
     newSize: {x: 0.3, y: 0.56}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -323,7 +323,7 @@ MonoBehaviour:
   viewMask:
     serializedVersion: 2
     m_Bits: 49152
-  speed: 4
+  speed: 6
   hp: 10
   maxHealth: 10
   player: {fileID: 4048907152586457210, guid: 59e7429eb997f344189e9931832d7df1, type: 3}

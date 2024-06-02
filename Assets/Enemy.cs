@@ -8,14 +8,19 @@ using static PlayerStat;
 public class Enemy : MonoBehaviour
 {
     // Интервал перерасчета пути
-    private float pathRecalculationInterval = 0.2f;
+    private float pathRecalculationInterval = 0.5f;
     private float timeSinceLastPathRecalculation;
+
+private Vector3 previousPlayerPosition;
+private Vector3 playerVelocity;
+
 
     // Диапазоны видимости и атаки
     public float visibilityRange = 10f;
     public float viewDistance = 10.0f;
     public LayerMask viewMask;
     private LayerMask decorLayerMask;
+private Vector3 lastSeenPlayerPosition;
 
 
     // Компоненты для поиска пути и управления движением
@@ -28,6 +33,8 @@ public class Enemy : MonoBehaviour
     public float speed;
     public float hp = 100f;
     public float maxHealth = 100f;
+// Получаем направление к игроку
+
 
     // Объект игрока и параметры атаки
     public Transform player;
@@ -83,7 +90,6 @@ private void Start()
 
     obstacleMask = LayerMask.GetMask("Wall");
     UpdatePathToPlayer();
-    FindPath();
 }
 
 
@@ -122,6 +128,11 @@ private void OnPathComplete(Path p)
     // Обновление в каждом кадре
     private void Update()
     {
+// Обновление скорости и направления игрока
+
+
+
+
            // Проверка наличия игрока
     if (player == null)
     {
@@ -130,37 +141,42 @@ private void OnPathComplete(Path p)
 
     float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-    // Проверка, видит ли враг игрока
-    if (distanceToPlayer <= visibilityRange && CanSeePlayer())
-    {
-        // Установка флага видимости игрока
-        isPlayerVisible = true;
-        timeSinceLastSawPlayer = Time.time; // Обновление времени последней видимости игрока
-        FindPathToPlayer(); // Найти путь к игроку
-    }
-    else
-    {
-        // Если враг не видит игрока, но видел его ранее
-        if (isPlayerVisible)
+if (distanceToPlayer <= visibilityRange && CanSeePlayer())
+{
+    isPlayerVisible = true;
+    timeSinceLastSawPlayer = Time.time;
+    lastSeenPlayerPosition = player.position; // Обновляем последнюю видимую позицию игрока
+    FindPathToPlayer(); // Вызываем метод поиска пути к игроку
+}
+
+        else
         {
-            // Если прошло достаточно времени с момента последней видимости игрока
-            if (Time.time - timeSinceLastSawPlayer > timeToForgetPlayer)
+            if (isPlayerVisible)
             {
-                isPlayerVisible = false; // Сброс флага видимости игрока
+                if (Time.time - timeSinceLastSawPlayer > timeToForgetPlayer)
+                {
+                    isPlayerVisible = false;
+                }
+                else
+                {
+                    FindPathToLastKnownPlayerPosition(); // Перейти к последней известной позиции игрока
+                }
             }
             else
             {
-                // Враг ещё помнит игрока, поэтому обновляем путь
-                FindPathToLastKnownPlayerPosition();
+                FindPathToLastKnownPlayerPosition(); // Перейти к последней известной позиции игрока
             }
         }
-        else
+        if (!isPlayerVisible && Time.time - timeSinceLastPathRecalculation > pathRecalculationInterval)
         {
-            // Если враг не видит игрока и не помнит его, обновляем путь к последней известной позиции игрока
-            FindPathToLastKnownPlayerPosition();
+            UpdatePathToLastPlayerPosition();
+            timeSinceLastPathRecalculation = Time.time;
         }
-    }
 
+    if (!isPlayerVisible && path != null)
+    {
+        MoveAlongPath();
+    }
         // Получение урона
         if (isTakingDamage)
         {
@@ -216,14 +232,21 @@ private void OnPathComplete(Path p)
         // Движение врага к следующей точке пути
         Vector2 targetPosition = new Vector2(path.vectorPath[currentWaypoint].x, path.vectorPath[currentWaypoint].y);
         Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-        rb.velocity = direction * speed;
+        rb.velocity = direction * speed * Time.deltaTime; // Скорость движения врага
 
         // Проверка, достиг ли враг текущей точки пути
         if (Vector2.Distance(transform.position, targetPosition) < waypointDistanceThreshold)
         {
             currentWaypoint++;
         }
+            playerVelocity = (isPlayerVisible) ? (player.position - previousPlayerPosition) / Time.deltaTime : Vector3.zero;
+    previousPlayerPosition = player.position;
     }
+// Предсказание будущей позиции игрока
+private Vector3 PredictPlayerPosition(float time)
+{
+    return player.position + playerVelocity * time;
+}
 
     // Фиксированный апдейт для движения
     private void FixedUpdate()
@@ -234,6 +257,19 @@ private void OnPathComplete(Path p)
         }
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+
+            if (!isPlayerVisible)
+            {
+                // Добавить проверку на препятствия при движении к игроку
+                RaycastHit2D obstacleHit = Physics2D.Linecast(transform.position, player.position, obstacleMask | decorLayerMask);
+                if (obstacleHit.collider != null)
+                {
+                    UpdatePathToLastPlayerPosition();
+                    return;
+                }
+            }
+
+
 
         // Атака игрока
         if (distanceToPlayer <= attackRange)
@@ -265,13 +301,15 @@ private void OnPathComplete(Path p)
             return;
         }
 
-        // Проверка наличия препятствий на линии видимости к игроку
-        RaycastHit2D hit = Physics2D.Linecast(transform.position, player.position, obstacleMask | decorLayerMask);
-        if (hit.collider != null)
-        {
-            UpdatePathToLastPlayerPosition();
-            return;
-        }
+Vector2 direction = ((Vector2)player.position - (Vector2)transform.position).normalized;
+
+RaycastHit2D hit = Physics2D.BoxCast(transform.position, GetComponent<Collider2D>().bounds.size, 0f, direction, distanceToPlayer, obstacleMask | decorLayerMask);
+            if (hit.collider != null)
+            {
+                UpdatePathToLastPlayerPosition();
+                return;
+            }
+
 
         if (path == null)
         {
@@ -295,33 +333,96 @@ private void OnPathComplete(Path p)
         }
     }
 
-    // Обновление пути к последней известной позиции игрока
-void UpdatePathToLastPlayerPosition()
+// Обновление пути к последней известной позиции игрока
+void UpdatePathToLastKnownPlayerPosition()
 {
-    seeker.StartPath(transform.position, player.position, OnPathComplete);
-    currentWaypoint = 0; // Сброс текущей позиции пути
+    seeker.StartPath(transform.position, lastSeenPlayerPosition, OnPathComplete);
+    currentWaypoint = 0;
+
+    // Обновляем переменную lastSeenPlayerPosition
+lastKnownPlayerPosition = lastSeenPlayerPosition;
+}
+
+// Передвижение вдоль пути с учётом размеров хитбокса
+// Передвижение вдоль пути с учётом размеров хитбокса
+private void MoveAlongPath()
+{
+    if (path == null || currentWaypoint >= path.vectorPath.Count)
+    {
+        return;
+    }
+
+    // Получаем позицию следующей точки пути
+    Vector2 targetPosition = path.vectorPath[currentWaypoint];
+
+    // Рассчитываем направление движения к следующей точке
+    Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
+
+    // Перемещаемся к следующей точке
+    Vector2 newPosition = (Vector2)transform.position + direction * speed * Time.fixedDeltaTime;
+    rb.MovePosition(newPosition);
+
+    // Проверяем, достигли ли следующей точки пути
+    if (Vector2.Distance(transform.position, targetPosition) < waypointDistanceThreshold)
+    {
+        currentWaypoint++;
+    }
+
+    // Если достигли конца пути и игрок невидим, двигаемся к последней известной позиции игрока
+    if (currentWaypoint >= path.vectorPath.Count && !isPlayerVisible)
+    {
+        FindPathToLastKnownPlayerPosition();
+    }
+}
+
+
+
+private Vector3 PredictedPlayerPosition(float time)
+{
+    return player.position + playerVelocity * time;
 }
 
 // Метод для проверки, видит ли враг игрока
 private bool CanSeePlayer()
 {
-    Vector2 directionToPlayer = player.position - transform.position;
+    Vector2 directionToPlayer = (isPlayerVisible) ? player.position - transform.position : PredictedPlayerPosition(1.0f) - transform.position;
     float distanceToPlayer = directionToPlayer.magnitude;
 
-    // Проверка, находится ли игрок в пределах дистанции видимости и не закрывается ли ему препятствие
-    if (distanceToPlayer <= visibilityRange && !Physics2D.Raycast(transform.position, directionToPlayer.normalized, distanceToPlayer, obstacleMask))
+    // Проверяем, находится ли игрок в пределах дистанции видимости
+    if (distanceToPlayer <= visibilityRange)
     {
-        return true;
+        // Проверка, есть ли препятствие на линии видимости к игроку
+RaycastHit2D hit = Physics2D.Linecast(transform.position, player.position, obstacleMask | decorLayerMask);
+        if (hit.collider != null)
+        {
+            UpdatePathToLastPlayerPosition();
+            return false; // Возвращаем false, так как игрок не виден из-за препятствия
+        }
+
+        // Обновляем lastSeenPlayerPosition
+        lastSeenPlayerPosition = player.position;
+        return true; // Возвращаем true, если игрок виден
     }
 
-    return false;
+    return false; // Возвращаем false, если игрок находится за пределами дистанции видимости
 }
+
+
 
 // Метод для поиска пути к последней известной позиции игрока
 private void FindPathToLastKnownPlayerPosition()
 {
-    seeker.StartPath(transform.position, lastKnownPlayerPosition, OnPathComplete);
+        Vector3 targetPosition = (isPlayerVisible) ? lastSeenPlayerPosition : PredictedPlayerPosition(1.0f);
+    seeker.StartPath(transform.position, targetPosition, OnPathComplete);
+    currentWaypoint = 0;
+    if (!isPlayerVisible)
+    {
+        seeker.StartPath(transform.position, lastKnownPlayerPosition, OnPathComplete);
+                lastKnownPlayerPosition = player.position; // Обновляем lastKnownPlayerPosition
+
+    }
 }
+
 // Метод для поиска пути к игроку
 private void FindPathToPlayer()
 {
@@ -334,6 +435,8 @@ void UpdatePathToPlayer()
 {
     seeker.StartPath(transform.position, player.position, OnPathComplete);
     currentWaypoint = 0; // Сброс текущей позиции пути
+lastPlayerPosition = player.position;
+
 }
 
 
@@ -367,6 +470,15 @@ void UpdatePathToPlayer()
             damageCooldownTimer = damageCooldown;
         }
     }
+// Обновление пути к последней известной позиции игрока
+private void UpdatePathToLastPlayerPosition()
+{
+    seeker.StartPath(transform.position, lastPlayerPosition, OnPathComplete);
+    currentWaypoint = 0;
+
+    // Обновляем переменную lastPlayerPosition
+    lastPlayerPosition = player.position;
+}
 
     // Смерть врага
 private void Die()

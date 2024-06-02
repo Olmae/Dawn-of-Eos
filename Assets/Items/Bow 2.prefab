@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 773684240254260160}
   - component: {fileID: 5426227477270712905}
   - component: {fileID: 5337207897332247199}
-  - component: {fileID: 2964770236559415461}
+  - component: {fileID: 5324908406080501500}
   m_Layer: 0
-  m_Name: Hammer
+  m_Name: Bow 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 40
-  m_Sprite: {fileID: -9095717837082945937, guid: ac9d0e7e62dc7c34a896805201bc53f8, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: -7856493677412862020, guid: 9ac1873470521634c9640a09880d95f9, type: 3}
+  m_Color: {r: 0.9056604, g: 0.5339979, b: 0.5339979, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -125,8 +125,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: -1.1599452}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5179285, y: 0.80869514}
-    oldSize: {x: 1, y: 2}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.5, y: 1.3529412}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -134,7 +134,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 3.3198905}
   m_EdgeRadius: 0
---- !u!114 &2964770236559415461
+--- !u!114 &5324908406080501500
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,15 +143,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2353681581901132422}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28ba943e9d598074fa226e6d4b3c8ad6, type: 3}
+  m_Script: {fileID: 11500000, guid: 1dc798df408dd1349b9bbe275608f65d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parameterTypes: 0200000002000000
-  improvementValues:
-  - -1
-  - 1
-  pickupSound: {fileID: 8300000, guid: 7cab6e80ad3a69a468722773b282c45b, type: 3}
+  parameterTypes: 
+  improvementValues: []
+  pickupSound: {fileID: 8300000, guid: 285f336df079e954f83c28a13505c2d3, type: 3}
   price: 5
-  weapon: {fileID: 11400000, guid: 4f475e60ca317ec4bbe42abec33ef449, type: 2}
+  bow: {fileID: 11400000, guid: 17e26c2e04a9d2b419f0254b6bdf8703, type: 2}
   audioMixer: {fileID: 24100000, guid: 7825e6e4763dd164390af14a4a885e0f, type: 2}
   sfxGroup: {fileID: 4605257054062381240, guid: 7825e6e4763dd164390af14a4a885e0f, type: 2}

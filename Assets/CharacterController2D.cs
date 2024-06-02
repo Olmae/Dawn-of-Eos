@@ -262,7 +262,7 @@ public void UseBow()
 
     if (Input.GetKeyDown(KeyCode.Mouse1))
     {
-        ToggleObjectsOnRMB();
+        ToggleSpriteRendererOnRMB();
         UseBow();
     }
 
@@ -324,7 +324,7 @@ public void UseBow()
                         {
                             PlaySound(currentWeapon.attackSound);
                         }
-                        ToggleObjectsOnLMB();
+                        ToggleSpriteRendererOnLMB();
                         // Устанавливаем параметры атаки
                         nextAttackTime = Time.time + currentWeapon.attackCooldown;
                         animator.SetBool("Attack", true);
@@ -432,29 +432,30 @@ private void DealDamageToEnemies()
     }
 }
 
-private void ToggleObjectsOnLMB()
+private void ToggleSpriteRendererOnLMB()
 {
     if (objectToDisableOnLMB != null)
     {
-        objectToDisableOnLMB.SetActive(false);
+        objectToDisableOnLMB.GetComponent<SpriteRenderer>().enabled = false;
     }
     if (objectToEnableOnLMB != null)
     {
-        objectToEnableOnLMB.SetActive(true);
+        objectToEnableOnLMB.GetComponent<SpriteRenderer>().enabled = true;
     }
 }
 
-private void ToggleObjectsOnRMB()
+private void ToggleSpriteRendererOnRMB()
 {
     if (objectToDisableOnRMB != null)
     {
-        objectToDisableOnRMB.SetActive(false);
+        objectToDisableOnRMB.GetComponent<SpriteRenderer>().enabled = false;
     }
     if (objectToEnableOnRMB != null)
     {
-        objectToEnableOnRMB.SetActive(true);
+        objectToEnableOnRMB.GetComponent<SpriteRenderer>().enabled = true;
     }
 }
+
 
     private void FixedUpdate()
     {

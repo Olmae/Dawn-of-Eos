@@ -34,6 +34,7 @@ public class BowController : MonoBehaviour
         {
             Debug.LogError("Не найден объект с тегом 'ArrowCountUI'");
         }
+        UpdateArrowCountUI();
     }
 
     // Метод для стрельбы с лука
@@ -127,7 +128,7 @@ public class BowController : MonoBehaviour
     }
 
     // Метод для обновления UI с количеством стрел
-    private void UpdateArrowCountUI()
+    public void UpdateArrowCountUI()
     {
         if (arrowCountText != null)
         {
