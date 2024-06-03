@@ -8,7 +8,7 @@ public class BowController : MonoBehaviour
     private bool isReloading = false; // Флаг перезарядки
     private AudioSource audioSource; // Компонент для воспроизведения звука
 
-    public int arrowCount = 10; // Количество стрел
+        [SerializeField]public int arrowCount = 10; // Количество стрел
     private Text arrowCountText; // UI элемент для отображения количества стрел
 
     // Метод для проверки состояния перезарядки
@@ -132,7 +132,7 @@ public class BowController : MonoBehaviour
     {
         if (arrowCountText != null)
         {
-            arrowCountText.text = "Arrows: " + arrowCount;
+            arrowCountText.text = "Стрелы: " + arrowCount;
         }
     }
 }

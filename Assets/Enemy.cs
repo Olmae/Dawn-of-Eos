@@ -331,6 +331,7 @@ RaycastHit2D hit = Physics2D.BoxCast(transform.position, GetComponent<Collider2D
         {
             currentWaypoint++;
         }
+        
     }
 
 // Обновление пути к последней известной позиции игрока
@@ -344,7 +345,7 @@ lastKnownPlayerPosition = lastSeenPlayerPosition;
 }
 
 // Передвижение вдоль пути с учётом размеров хитбокса
-// Передвижение вдоль пути с учётом размеров хитбокса
+
 private void MoveAlongPath()
 {
     if (path == null || currentWaypoint >= path.vectorPath.Count)
@@ -359,7 +360,7 @@ private void MoveAlongPath()
     Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
 
     // Перемещаемся к следующей точке
-    Vector2 newPosition = (Vector2)transform.position + direction * speed * Time.fixedDeltaTime;
+    Vector2 newPosition = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
     rb.MovePosition(newPosition);
 
     // Проверяем, достигли ли следующей точки пути
@@ -374,6 +375,7 @@ private void MoveAlongPath()
         FindPathToLastKnownPlayerPosition();
     }
 }
+
 
 
 

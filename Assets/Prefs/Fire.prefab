@@ -324,7 +324,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 49152
   speed: 6
-  hp: 10
+  hp: 5
   maxHealth: 10
   player: {fileID: 4048907152586457210, guid: 59e7429eb997f344189e9931832d7df1, type: 3}
   attackRange: 1

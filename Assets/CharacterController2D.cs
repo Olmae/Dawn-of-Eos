@@ -429,8 +429,18 @@ private void DealDamageToEnemies()
             enemyComponent.TakeDamage(attackDamage);
             hasDealtDamage = true; // Устанавливаем флаг, чтобы предотвратить нанесение дополнительного урона
         }
+        
+        // Проверяем, если это босс и не было нанесено урона
+        Boss bossComponent = enemy.GetComponent<Boss>();
+        if (bossComponent != null && !hasDealtDamage)
+        {
+            // Нанесение урона боссу
+            bossComponent.TakeDamage(attackDamage);
+            hasDealtDamage = true; // Устанавливаем флаг, чтобы предотвратить нанесение дополнительного урона
+        }
     }
 }
+
 
 private void ToggleSpriteRendererOnLMB()
 {

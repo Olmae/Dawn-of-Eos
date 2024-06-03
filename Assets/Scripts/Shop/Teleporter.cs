@@ -6,9 +6,11 @@ public class Teleporter : MonoBehaviour
     public GameObject spawnPrefab;
     public Vector3 spawnPositionOffset;
 
+    private bool hasTeleported = false; // Флаг, указывающий, была ли уже выполнена телепортация
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (!hasTeleported && other.CompareTag("Player")) // Проверяем, была ли уже выполнена телепортация
         {
             GameObject teleportObject = GameObject.FindGameObjectWithTag(teleportTag);
             
@@ -16,11 +18,13 @@ public class Teleporter : MonoBehaviour
             {
                 Vector3 teleportPosition = teleportObject.transform.position;
                 teleportPosition += spawnPositionOffset; // Добавляем смещение к позиции телепортационного объекта
-                                teleportPosition.y -= 2f;
+                teleportPosition.y -= 2f;
 
-                
                 // Телепортация игрока к новой позиции
                 other.transform.position = teleportPosition;
+
+                // Помечаем, что телепортация уже выполнена
+                hasTeleported = true;
 
                 // Проверяем, нужно ли спавнить префаб
                 if (spawnPrefab != null)

@@ -5,13 +5,13 @@ public class Boss : MonoBehaviour
     public float detectionRange = 10f;
     public float attackRange = 3f;
     public float moveSpeed = 5f;
-    public int maxHealth = 100;
+    public float maxHealth = 100;
     public int attackDamage = 20;
     public float attackDelay = 2f;
-    public GameObject deathEffect;
+    public GameObject spawnPrefab; // Префаб для спавна
     public Transform player;
 
-    private int currentHealth;
+    public float currentHealth;
     private bool isAttacking = false;
     private Rigidbody2D rb;
 
@@ -72,7 +72,11 @@ public class Boss : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Attack();
+            PlayerStat playerStat = other.GetComponent<PlayerStat>();
+            if (playerStat != null)
+            {
+                playerStat.TakeDamage(attackDamage);
+            }
         }
     }
 
@@ -93,7 +97,7 @@ public class Boss : MonoBehaviour
         isAttacking = false;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         if (!isTakingDamage)
         {
@@ -112,7 +116,11 @@ public class Boss : MonoBehaviour
 
     void Die()
     {
-        Instantiate(deathEffect, transform.position, Quaternion.identity);
+        // Создаем новый экземпляр префаба
+        if (spawnPrefab != null)
+        {
+            Instantiate(spawnPrefab, transform.position, Quaternion.identity);
+        }
         Destroy(gameObject);
     }
 }

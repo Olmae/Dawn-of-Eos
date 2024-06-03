@@ -16,15 +16,16 @@ public class Achievement
     }
 }
 
+[System.Serializable]
 public class PlayerStat : MonoBehaviour
 {
     [Header("Health")]
-    public float maxHealth = 6f;
-    public float currentHealth;
+       [SerializeField] public float maxHealth = 6f;
+    [SerializeField]     public float currentHealth;
     public Text healthText;
 
     [Header("Money")]
-    public int money = 0;
+       [SerializeField] public int money = 0;
     public Text moneyText;
 
     [Header("Kills")]

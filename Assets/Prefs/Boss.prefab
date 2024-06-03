@@ -272,11 +272,13 @@ MonoBehaviour:
   detectionRange: 10
   attackRange: 3
   moveSpeed: 6.18
-  maxHealth: 20
+  maxHealth: 10
   attackDamage: 1
   attackDelay: 4
-  deathEffect: {fileID: 0}
+  spawnPrefab: {fileID: 4322196711018034389, guid: b34387216b8702a47917d55931180ff3, type: 3}
   player: {fileID: 0}
+  currentHealth: 0
+  damageCooldown: 1
 --- !u!1 &5762223591412431401
 GameObject:
   m_ObjectHideFlags: 0
