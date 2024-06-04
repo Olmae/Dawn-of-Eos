@@ -93,6 +93,37 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &5020601989828129399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 417118616813133234}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &417118616813133234
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5020601989828129399}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.573476, y: 0.23344484, z: -0.03702061}
+  m_LocalScale: {x: 0.58823526, y: 0.58823526, z: 0.58823526}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6238204370999113005}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6238204370999113010
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,7 +140,7 @@ GameObject:
   - component: {fileID: 8108008695055409437}
   - component: {fileID: 2149692940909463748}
   m_Layer: 13
-  m_Name: Fire
+  m_Name: fire
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,6 +161,7 @@ Transform:
   m_Children:
   - {fileID: 8421010622373538068}
   - {fileID: 7187850100199079392}
+  - {fileID: 417118616813133234}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6238204370999113006
@@ -175,7 +207,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 59
-  m_Sprite: {fileID: -846445609, guid: 31d3ffcb247e27b47b9ab02eb97377fe, type: 3}
+  m_Sprite: {fileID: -1165441540, guid: 31d3ffcb247e27b47b9ab02eb97377fe, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -262,17 +294,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.004966557, y: -0.058504842}
+  m_Offset: {x: 0.004966557, y: -0.08272196}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.05, y: 0.09}
+    oldSize: {x: 0.05, y: 0.07}
     newSize: {x: 0.3, y: 0.56}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.22970107, y: 0.21689864}
+  m_Size: {x: 0.22970107, y: 0.16846439}
   m_EdgeRadius: 0
 --- !u!114 &8108008695055409437
 MonoBehaviour:
@@ -286,14 +318,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7340e1b84fe6fd49a03df8c9d75bebf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visibilityRange: 5
+  visibilityRange: 4
   viewDistance: 15
   viewMask:
     serializedVersion: 2
     m_Bits: 49152
   speed: 6
-  hp: 5
-  maxHealth: 10
+  hp: 2
+  maxHealth: 5
   player: {fileID: 4048907152586457210, guid: 59e7429eb997f344189e9931832d7df1, type: 3}
   attackRange: 1
   attackDamage: 1
@@ -327,7 +359,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4

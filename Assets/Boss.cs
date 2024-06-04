@@ -5,7 +5,7 @@ public class Boss : MonoBehaviour
     public float detectionRange = 10f;
     public float attackRange = 3f;
     public float moveSpeed = 5f;
-    public float maxHealth = 100;
+    public float maxHealth = 10;
     public int attackDamage = 20;
     public float attackDelay = 2f;
     public GameObject spawnPrefab; // Префаб для спавна

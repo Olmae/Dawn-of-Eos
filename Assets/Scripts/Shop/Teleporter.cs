@@ -5,6 +5,8 @@ public class Teleporter : MonoBehaviour
     public string teleportTag;
     public GameObject spawnPrefab;
     public Vector3 spawnPositionOffset;
+    
+    private bool prefabSpawned = false; // Флаг, который отслеживает, был ли заспавнен префаб
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -16,17 +18,18 @@ public class Teleporter : MonoBehaviour
             {
                 Vector3 teleportPosition = teleportObject.transform.position;
                 teleportPosition += spawnPositionOffset; // Добавляем смещение к позиции телепортационного объекта
-                                teleportPosition.y -= 2f;
+                spawnPositionOffset.y += 2f;
+                teleportPosition.y -= 2f;
 
-                
                 // Телепортация игрока к новой позиции
                 other.transform.position = teleportPosition;
 
                 // Проверяем, нужно ли спавнить префаб
-                if (spawnPrefab != null)
+                if (spawnPrefab != null && !prefabSpawned)
                 {
                     // Спавним префаб на указанной позиции
                     Instantiate(spawnPrefab, teleportPosition, Quaternion.identity);
+                    prefabSpawned = true; // Устанавливаем флаг, что префаб заспавнен
                 }
             }
             else

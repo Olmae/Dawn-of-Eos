@@ -240,7 +240,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 5095230795288419795}
   m_BodyType: 0
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 500
   m_LinearDrag: 0
@@ -253,7 +253,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
@@ -269,9 +269,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0d673cc7228d974e8175a1de1331e2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRange: 10
+  detectionRange: 16.77
   attackRange: 3
-  moveSpeed: 6.18
+  moveSpeed: 6
   maxHealth: 10
   attackDamage: 1
   attackDelay: 4

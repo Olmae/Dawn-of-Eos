@@ -32,6 +32,8 @@ public class Item1 : MonoBehaviour
 
     private bool isInRange = false; // Флаг для отслеживания нахождения игрока в триггере
 
+
+
     private void Update()
     {
         // Если игрок в зоне триггера и нажата клавиша "Е", активируем объект
@@ -53,6 +55,7 @@ public class Item1 : MonoBehaviour
         {
             // Уменьшаем количество денег у игрока
             playerStat.money -= price;
+            playerStat.UpdateMoneyText();
 
             // Применяем улучшение параметров в зависимости от выбранных типов
             for (int i = 0; i < parameterTypes.Length; i++)
