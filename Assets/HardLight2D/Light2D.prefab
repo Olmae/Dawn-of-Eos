@@ -47,9 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: -553817549, guid: a18d607b5ef4c264aab6c335019691c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Range: 6.92
+  Range: 11.32
   Color: {r: 0.2664675, g: 0.5188679, b: 0.24230151, a: 1}
-  Intensity: 0.33
+  Intensity: 0.55
   SortingLayer: Default
   SortingOrder: 99
   filteringSettings:

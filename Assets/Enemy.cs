@@ -93,20 +93,7 @@ private void Start()
 }
 
 
-    // Отображение здоровья над врагом
-    private void OnGUI()
-    {
-        // Получаем координаты головы врага в экранных координатах
-        Vector3 worldPosition = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z);
-        Vector3 screenPosition = mainCamera.WorldToScreenPoint(worldPosition);
 
-        // Рисуем healthbar над головой врага
-        Rect rect = new Rect(screenPosition.x - 50f, Screen.height - screenPosition.y + 20f, 100f, 20f);
-        GUI.color = Color.cyan;
-        GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, rect.height), Texture2D.whiteTexture);
-        GUI.color = Color.red;
-        GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width * (hp / maxHealth), rect.height), Texture2D.whiteTexture);
-    }
 
     // Обновление пути к игроку
     private void FindPath()
