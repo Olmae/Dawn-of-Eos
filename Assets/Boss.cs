@@ -68,14 +68,14 @@ public class Boss : MonoBehaviour
         rb.velocity = moveDirection * moveSpeed;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player"))
         {
-            PlayerStat playerStat = other.GetComponent<PlayerStat>();
-            if (playerStat != null)
+            PlayerStat playerStat = other.gameObject.GetComponent<PlayerStat>();
+            if (playerStat != null && isAttacking)
             {
-                playerStat.TakeDamage(attackDamage);
+                DealDamage(playerStat);
             }
         }
     }
@@ -83,18 +83,20 @@ public class Boss : MonoBehaviour
     void Attack()
     {
         isAttacking = true;
-        Invoke("DealDamage", attackDelay);
+        Invoke("StopAttack", attackDelay);
     }
 
-    void DealDamage()
+    void StopAttack()
     {
-        PlayerStat playerStat = player.GetComponent<PlayerStat>();
+        isAttacking = false;
+    }
+
+    void DealDamage(PlayerStat playerStat)
+    {
         if (playerStat != null)
         {
             playerStat.TakeDamage(attackDamage);
         }
-
-        isAttacking = false;
     }
 
     public void TakeDamage(float damage)

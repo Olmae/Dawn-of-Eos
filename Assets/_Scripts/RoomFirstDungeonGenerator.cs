@@ -22,7 +22,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     [SerializeField] private List<GameObject> enemyPrefabs;
     [SerializeField] private int enemyCount = 10;
     private Vector2Int playerPosition; // Добавь эту переменную для хранения позиции игрока
-    private float enemySpawnChance = 0.5f; // Пример значения вероятности спавна врагов\
+    private float enemySpawnChance = 1f; // Пример значения вероятности спавна врагов\
     public int desiredEnemyCount = 10;
     
 
@@ -45,7 +45,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         // Запускаем процесс создания новой локации
         RunProceduralGeneration();
 
-        Invoke("ScanPathfinding", 0.2f);
+        Invoke("ScanPathfinding", 0.1f);
 
     }
     private void ScanPathfinding()
@@ -155,7 +155,6 @@ SpawnEnemiesRandomly(roomCenters, enemiesContainer, desiredEnemyCount);
     tilemapVisualizer.PaintFloorTiles(floor);
     WallGenerator.CreateWalls(floor, tilemapVisualizer);
 
-    AstarPath.active.Scan();
     Debug.Log("A* scan completed.");
 }
 
@@ -213,7 +212,7 @@ private void SpawnEnemiesRandomly(List<Vector2Int> roomCenters, GameObject enemi
                         {
                             // Генерируем позицию для спавна врага в пределах комнаты
                             Vector2 spawnPosition = GetRandomSpawnPosition(center);
-                            if (spawnPosition != Vector2.zero && !IsTileInExcludedTilemap(Vector2Int.RoundToInt(spawnPosition)))
+                            if (spawnPosition != Vector2.zero && !IsTileInExcludedTilemap(Vector2Int.RoundToInt(spawnPosition)) && !IsPositionInWall(spawnPosition))
                             {
                                 GameObject enemyPrefab = GetRandomEnemyPrefab();
                                 if (enemyPrefab != null)
@@ -242,6 +241,21 @@ private void SpawnEnemiesRandomly(List<Vector2Int> roomCenters, GameObject enemi
         }
     }
 }
+
+private bool IsPositionInWall(Vector2 position)
+{
+    // Проверяем наличие объектов с тегом "Wall" в радиусе 0.1 от указанной позиции
+    Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.1f);
+    foreach (var collider in colliders)
+    {
+        if (collider.CompareTag("Wall"))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 
@@ -302,7 +316,6 @@ private void SpawnBoxesRandomly(List<Vector2Int> roomCenters, GameObject boxesCo
                 boxCount--;
             }
         }
-                        AstarPath.active.Scan();
 
     }
 }
@@ -314,7 +327,6 @@ private void SpawnBoxesRandomly(List<Vector2Int> roomCenters, GameObject boxesCo
         TileBase tile = excludedTilemap.GetTile((Vector3Int)tilePosition);
         // Если тайл не равен null, значит позиция находится на исключенной тайлмапе
         return tile != null;
-                        AstarPath.active.Scan();
 
     }
 

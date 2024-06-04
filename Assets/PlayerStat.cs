@@ -170,7 +170,7 @@ private void LoadSavedData()
 
     public void UpdateHealthText()
     {
-        healthText.text = "ХП: " + currentHealth.ToString();
+        healthText.text = "ОЗ: " + currentHealth.ToString();
     }
 
     public void UpdateMoneyText()
